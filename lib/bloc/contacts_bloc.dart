@@ -20,7 +20,6 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
       } else if (event is UpdateContacts) {
         try {
           await contactService.updateContact(event.contact, event.id);
-          
         } catch (e) {
           emit(ContactPageError(e.toString()));
         }
@@ -34,6 +33,7 @@ class ContactsBloc extends Bloc<ContactsEvent, ContactsState> {
       } else if (event is DeleteContacts) {
         try {
           await contactService.deleteContact(event.id);
+          emit(ContactDeleted());
         } catch (e) {
           emit(ContactPageError(e.toString()));
         }

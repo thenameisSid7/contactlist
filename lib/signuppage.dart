@@ -20,6 +20,8 @@ class _SignupPageState extends State<SignupPage> {
 
   Future save() async {
     if (pass != null && email != null) {
+      print(pass);
+      print(email);
       var response = await Dio().post(
           "http://172.20.10.5:8000/api/v1/user/auth/register",
           data: {"password": "$pass", "email": "$email"});
@@ -108,7 +110,6 @@ class _SignupPageState extends State<SignupPage> {
                                     const BorderSide(color: Colors.red))),
                       ),
                     ),
-
                     Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: TextFormField(

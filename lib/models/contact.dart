@@ -24,7 +24,7 @@ class ContactList {
 class Contact {
   String? sId;
   String? name;
-  String? phone;
+  int? phone;
 
   Contact({this.sId, this.name, this.phone});
 
@@ -36,7 +36,6 @@ class Contact {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {};
-    data['_id'] = sId;
     data['name'] = name;
     data['phone'] = phone;
     return data;

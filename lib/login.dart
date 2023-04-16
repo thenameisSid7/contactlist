@@ -21,6 +21,8 @@ class _LoginPageState extends State<LoginPage> {
 
   Future save() async {
     if (pass != null && email != null) {
+      print(pass);
+      print(email);
       var response = null;
       try{
         response = await Dio().post(

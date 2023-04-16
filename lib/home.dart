@@ -37,11 +37,21 @@ class _ContactsScreenState extends State<ContactsScreen> {
         ),
       ),
       body: BlocListener<ContactsBloc, ContactsState>(
+        bloc: contactsBloc,
         listener: (context, state) {
-          if(state is ContactAdded){
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Contact Added')));
+          if (state is ContactAdded) {
+            contactsBloc.add(FetchContacts());
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text('Contact Added')));
+          } else if (state is ContactDeleted) {
+            contactsBloc.add(FetchContacts());
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text('Contact Deleted')));
+          } else if (state is ContactUpdated) {
+            contactsBloc.add(FetchContacts());
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(content: Text('Contact Updated')));
           }
-          
         },
         child: BlocBuilder<ContactsBloc, ContactsState>(
           bloc: contactsBloc,
@@ -50,8 +60,9 @@ class _ContactsScreenState extends State<ContactsScreen> {
                 state.contactList.contact != null) {
               return mainBody(state.contactList);
             } else if (state is ContactPageError) {
+              // print(state.message)l÷÷
               return Center(
-                child: Text(state.toString()),
+                child: Text(state.message),
               );
             } else {
               return const Center(
@@ -107,6 +118,54 @@ class _ContactsScreenState extends State<ContactsScreen> {
     );
   }
 
+  void editContact(BuildContext context, Contact _contact) async {
+    _newContactNameController.text = _contact.name!;
+    _newContactPhoneController.text = _contact.phone!.toString();
+    await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Edit Contact'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _newContactNameController,
+              onChanged: (value) => _contact.name = value,
+              decoration: const InputDecoration(
+                labelText: 'Name',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: _newContactPhoneController,
+              decoration: const InputDecoration(
+                labelText: 'Phone',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Contact contact = Contact(
+                  name: _newContactNameController.text,
+                  phone: int.parse(_newContactPhoneController.text));
+              contactsBloc.add(DeleteContacts(_contact.sId!));
+              contactsBloc.add(AddContacts(contact));
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _addContact() {
     String? Name = _newContactNameController.text;
     String? Phone = _newContactPhoneController.text;
@@ -114,13 +173,18 @@ class _ContactsScreenState extends State<ContactsScreen> {
     if (Name.isEmpty || Phone.isEmpty) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Fields can't be empty")));
+      return;
     }
-    ;
-    Contact contact = Contact(name: Name, phone: Phone, sId: null);
+    print(Name);
+    print(Phone);
+
+    Contact contact = Contact(name: Name, phone: int.parse(Phone), sId: null);
     contactsBloc.add(AddContacts(contact));
   }
 
-  void _deleteContact(Contact contact) {}
+  void _deleteContact(Contact contact) {
+    contactsBloc.add(DeleteContacts(contact.sId!));
+  }
 
   Widget floatingButton() {
     return FloatingActionButton(
@@ -155,6 +219,8 @@ class _ContactsScreenState extends State<ContactsScreen> {
             ),
             ElevatedButton(
               onPressed: () {
+                _newContactNameController.text = "";
+                _newContactPhoneController.text = "";
                 _addContact();
                 Navigator.pop(context);
               },

@@ -17,4 +17,8 @@ class ContactPageError extends ContactsState {
 
 class ContactAdded extends ContactsState {}
 
+class ContactDeleted extends ContactsState {}
+
+class ContactUpdated extends ContactsState {}
+
 

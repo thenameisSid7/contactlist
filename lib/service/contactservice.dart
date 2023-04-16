@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 String baseUrl = "http://172.20.10.5:8000/api/v1";
 
 class ContactService {
-  String url = "$baseUrl/contacts";
+  String url = "$baseUrl/contact";
   late Dio dio;
 
   ContactService() {
@@ -13,6 +13,7 @@ class ContactService {
 
   Future<ContactList> getContacts() async {
     var response = await dio.get(url);
+  
     var contactList = ContactList.fromJson(response.data);
     return contactList;
   }
@@ -26,6 +27,7 @@ class ContactService {
   }
 
   Future<void> addContact(Contact contact) async {
-    await dio.post(url, data:contact);
+  
+    await dio.post(url, data: contact.toJson());
   }
 }
