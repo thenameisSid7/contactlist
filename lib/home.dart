@@ -41,12 +41,12 @@ class _ContactsScreenState extends State<ContactsScreen> {
         listener: (context, state) {
           if (state is ContactAdded) {
             contactsBloc.add(FetchContacts());
-            ScaffoldMessenger.of(context)
-                .showSnackBar(const SnackBar(content: Text('Contact Added')));
+            // ScaffoldMessenger.of(context)
+            //     .showSnackBar(const SnackBar(content: Text('Contact Added')));
           } else if (state is ContactDeleted) {
             contactsBloc.add(FetchContacts());
-            ScaffoldMessenger.of(context)
-                .showSnackBar(const SnackBar(content: Text('Contact Deleted')));
+            // ScaffoldMessenger.of(context)
+            //     .showSnackBar(const SnackBar(content: Text('Contact Deleted')));
           } else if (state is ContactUpdated) {
             contactsBloc.add(FetchContacts());
             ScaffoldMessenger.of(context)
@@ -158,6 +158,7 @@ class _ContactsScreenState extends State<ContactsScreen> {
                   phone: int.parse(_newContactPhoneController.text));
               contactsBloc.add(DeleteContacts(_contact.sId!));
               contactsBloc.add(AddContacts(contact));
+              Navigator.pop(context);
             },
             child: const Text('Save'),
           ),
